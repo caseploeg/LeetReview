@@ -1,0 +1,4 @@
+include leetreview/schema.sql
+graft leetreview/static
+graft leetreview/templates
+global-exclude *.pyc
