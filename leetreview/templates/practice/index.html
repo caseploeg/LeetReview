@@ -1,0 +1,28 @@
+<!doctype html>
+<head>
+  <!-- Installing the sortable.js library. Used for rearrange code solutions-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"></script>
+</head>
+<title>Practice - LeetReview</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<body>
+  <h1>Practice</h1>
+  <div id="code">
+    {% for line in lines %}
+    <p style="white-space: pre">{{line|string}}</p>
+    {% endfor %}
+  </div>
+  
+</body>
+<script>
+  const Sortable = window.Sortable;
+  
+  let el = document.getElementById('code');
+  let sortable = Sortable.create(el);
+  function test(data) {
+    console.log('hello world!');
+    console.log(data); 
+  }
+ 
+  test({{ lines|tojson }});
+</script>
