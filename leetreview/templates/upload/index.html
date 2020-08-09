@@ -3,16 +3,19 @@
 {% block header %}
   <h1>{% block title %}Solutions{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('blog.create') }}">New</a>
+    <a class="action" href="{{ url_for('upload.upload_file') }}">New</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
   {% for s in solutions %}
-    <article class="post">
-      <p>{{ s['original_url'] }}</p>
-      <p class="body">{{ s['lines'] }}</p>
-    </article>
+    <a href="{{ url_for('practice.practice_solution', id=s['id']) }}">
+      <article class="post">
+        <p>{{ s['original_url'] }}</p>
+        <p class="body">{{ s['lines'] }}</p>
+      </article>
+    </a>
+
     {% if not loop.last %}
       <hr>
     {% endif %}

@@ -11,6 +11,27 @@ from leetreview.db import get_db
 
 bp = Blueprint('practice', __name__, url_prefix='/practice')
 
+
+def get_solution(id):
+    # select the solution from the database with matching id
+    db = get_db()
+    solution = db.execute(
+        'SELECT s.id, lines, created, author_id, original_url'
+        ' FROM solution s JOIN user u ON s.author_id = u.id'
+        ' WHERE s.id = ?',
+        (id,)
+    ).fetchone()
+    return solution
+
+
+def get_lines(solution):
+    # given a solution entry from the database, retrieve the lines for
+    # the solution and generaate a scrambled permutation of them
+    saved_lines = json.loads(solution["lines"]) 
+    shuffled_lines = random.sample(saved_lines, k=len(saved_lines)) 
+    return saved_lines, shuffled_lines
+
+
 @bp.route('/check', methods=['POST'])
 def check_answer():
     # receives the users answer to the scrambled code, for a specified solution / id
@@ -18,15 +39,7 @@ def check_answer():
     if request.method == 'POST':
         req_json = request.get_json()
         id = req_json['id']
-        db = get_db()
-        # select the solution from the database with matching id
-        solution = db.execute(
-            'SELECT s.id, lines, created, author_id'
-            ' FROM solution s JOIN user u ON s.author_id = u.id'
-            ' WHERE s.id = ?',
-            (id,)
-        ).fetchone()
-
+        solution = get_solution(id)
         saved_lines = json.loads(solution["lines"]) 
         user_lines = req_json['lines']
         correct = True
@@ -43,9 +56,19 @@ def check_answer():
         return jsonify(correct) 
 
 
+@bp.route('/<int:id>')
+@login_required
+def practice_solution(id):
+    # returns a question to be solved based on the id url param
+    solution = get_solution(id)
+    saved_lines, shuffled_lines = get_lines(solution)
+    return render_template('practice/index.html', lines=shuffled_lines, url=solution['original_url'], id=solution['id'])
+
+
 @bp.route('/')
 @login_required
 def index():
+    # currently the index template returns a random question for you to solve
     db = get_db()
     solutions = db.execute(
         'SELECT s.id, lines, created, author_id, original_url'
@@ -53,9 +76,7 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
     solution = random.choice(solutions)
-    current_app.logger.info(solution)
-    saved_lines = json.loads(solution["lines"]) 
-    shuffled_lines = random.sample(saved_lines, k=len(saved_lines)) 
+    saved_lines, shuffled_lines = get_lines(solution)
 
     # setting default to str fixes issues with dates and other objects not being serializable.
     # rows are converted to tuples from the SQLite.Row type in order to serializable.
