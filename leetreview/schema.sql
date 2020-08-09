@@ -22,5 +22,6 @@ CREATE TABLE solution (
   lines TEXT NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   author_id INTEGER NOT NULL,
+  original_url TEXT NOT NULL,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );

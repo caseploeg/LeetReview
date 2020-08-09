@@ -10,6 +10,7 @@
 {% block content %}
   {% for s in solutions %}
     <article class="post">
+      <p>{{ s['original_url'] }}</p>
       <p class="body">{{ s['lines'] }}</p>
     </article>
     {% if not loop.last %}

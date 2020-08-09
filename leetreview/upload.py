@@ -14,6 +14,7 @@ def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -22,6 +23,9 @@ def upload_file():
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
+        
+        url = request.form["url"]
+        current_app.logger.info(url)
         file = request.files['file']
         # if user does not select file, browser also
         # submits an empty part without filename
@@ -46,9 +50,9 @@ def upload_file():
             if len(lines) != 0:
                 db = get_db()
                 db.execute(
-                    'INSERT INTO solution (lines, author_id)'
-                    ' VALUES (?, ?)',
-                    (obj, g.user['id'])
+                    'INSERT INTO solution (lines, author_id, original_url)'
+                    ' VALUES (?, ?, ?)',
+                    (obj, g.user['id'], url)
                 )
                 db.commit()
                 return redirect(url_for('upload.uploaded_file', filename=filename))
@@ -65,6 +69,7 @@ def upload_file():
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
+      <input type=url name=url>
       <input type=submit value=Upload>
     </form>
     '''
@@ -74,7 +79,7 @@ def upload_file():
 def uploaded_file(filename):
     db = get_db()
     solutions = db.execute(
-        'SELECT s.id, lines, created, author_id'
+        'SELECT s.id, lines, created, author_id, original_url'
         ' FROM solution s JOIN user u ON s.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
