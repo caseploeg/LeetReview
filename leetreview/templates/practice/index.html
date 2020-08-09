@@ -13,7 +13,10 @@
     <p style="white-space: pre">{{line|string}}</p>
     {% endfor %}
   </div>
-  <button id="submit" type="button">Submit</button> 
+  </div>
+      <button id="submit" type="button">Submit</button> 
+      <p id="result"></p>
+  <div>
 </body>
 <script>
   const Sortable = window.Sortable;
@@ -44,10 +47,11 @@
         // by updating background color on screen
         //
         // TODO: find a less visually obnoxious way to do this
+        let res = document.getElementById('result');
         if (correct === true) {
-            el.style.backgroundColor = 'green';
+            res.innerText = 'Correct!';
         } else if (correct === false) {
-            el.style.backgroundColor = 'red';
+            res.innerText = 'Incorrect!';
         }
     });
   }
@@ -61,7 +65,7 @@
       
       return {
           lines: lines,
-          id: {{id}},
+          id: "{{id}}",
       };
   }
   let submit_button = document.getElementById("submit");
