@@ -31,9 +31,18 @@ def get_lines(solution):
     shuffled_lines = random.sample(saved_lines, k=len(saved_lines)) 
     return saved_lines, shuffled_lines
 
+"""
+@bp.route('/<id>/check', methods=['POST'])
+def check_answer_with_id(id):
+    current_app.logger.info("hi")
+    return redirect(url_for("practice.check_answer"))
+"""
 
+# accept the request to check answers from either the main practice page
+# or the one that specifies the problem id
+@bp.route('/<id>/check', methods=['POST'])
 @bp.route('/check', methods=['POST'])
-def check_answer():
+def check_answer(id=None):
     # receives the users answer to the scrambled code, for a specified solution / id
     # and returns whether the submitted permutation is correct or not
     if request.method == 'POST':
@@ -56,7 +65,7 @@ def check_answer():
         return jsonify(correct) 
 
 
-@bp.route('/<id>')
+@bp.route('/<id>/')
 @login_required
 def practice_solution(id):
     # returns a question to be solved based on the id url param
