@@ -1,23 +1,14 @@
-{% extends 'base.html' %}
-
-{% block header %}
-  <h1>{% block title %}Solutions{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('upload.upload_file') }}">New</a>
-  {% endif %}
-{% endblock %}
-
-{% block content %}
-  {% for s in solutions %}
-    <a href="{{ url_for('practice.practice_solution', id=s['id']) }}">
-      <article class="post">
-        <p>{{ s['original_url'] }}</p>
-        <p class="body">{{ s['lines'] }}</p>
-      </article>
-    </a>
-
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
-{% endblock %}
+<!doctype html>
+<title>Upload new File</title>
+<h1>Upload new File</h1>
+<form method=post enctype=multipart/form-data>
+  <input type=file name=file>
+  <label>Id</label>
+  <input type=text name=id>
+  <label>Url</label>
+  <input type=url name=url>
+  <input type=submit value=Upload>
+</form>
+{% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}

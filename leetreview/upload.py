@@ -1,5 +1,6 @@
 import os
 import json
+import sqlite3
 from flask import Blueprint, g, render_template, send_from_directory, flash, request, redirect, url_for, current_app
 from werkzeug.utils import secure_filename
 
@@ -25,6 +26,7 @@ def upload_file():
             return redirect(request.url)
         
         url = request.form["url"]
+        id = request.form["id"]
         current_app.logger.info(url)
         file = request.files['file']
         # if user does not select file, browser also
@@ -32,6 +34,11 @@ def upload_file():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+        if id == '':
+            flash('No id given')
+            return redirect(request.url)
+        # check id is unique
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
@@ -49,30 +56,21 @@ def upload_file():
             # create a entry in the database
             if len(lines) != 0:
                 db = get_db()
-                db.execute(
-                    'INSERT INTO solution (lines, author_id, original_url)'
-                    ' VALUES (?, ?, ?)',
-                    (obj, g.user['id'], url)
-                )
-                db.commit()
+                try:
+                    db.execute(
+                        'INSERT INTO solution (id, lines, author_id, original_url)'
+                        ' VALUES (?, ?, ?, ?)',
+                        (id, obj, g.user['id'], url)
+                    )
+                    db.commit()
+                except sqlite3.IntegrityError:
+                    flash('id not unique')
+                    return redirect(request.url)
                 return redirect(url_for('upload.uploaded_file', filename=filename))
                 # return redirect(url_for('index'))
             else:
                 flash('Empty File')
-
-
-
-
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=url name=url>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return render_template('upload/index.html')
 
 
 @bp.route('<path:filename>')
@@ -84,5 +82,5 @@ def uploaded_file(filename):
         ' ORDER BY created DESC'
     ).fetchall()
     current_app.logger.info(solutions)
-    return render_template('upload/index.html', solutions=solutions)
+    return render_template('upload/solutions.html', solutions=solutions)
     # return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)

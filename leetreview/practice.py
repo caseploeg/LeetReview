@@ -56,7 +56,7 @@ def check_answer():
         return jsonify(correct) 
 
 
-@bp.route('/<int:id>')
+@bp.route('/<id>')
 @login_required
 def practice_solution(id):
     # returns a question to be solved based on the id url param
