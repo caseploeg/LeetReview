@@ -2,13 +2,30 @@
 <title>Upload new File</title>
 <h1>Upload new File</h1>
 <form method=post enctype=multipart/form-data>
-  <input type=file name=file>
+  <input id="file-input" type=file name=file>
+  <br>
   <label>Id</label>
-  <input type=text name=id>
+  <input id="id-input" type=text name=id>
+  <br>
   <label>Url</label>
-  <input type=url name=url>
+  <input id="url-input" type=url name=url>
+  <br>
   <input type=submit value=Upload>
 </form>
 {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
 {% endfor %}
+<script>
+    file_input = document.getElementById("file-input");
+    id_input = document.getElementById("id-input");
+    url_input = document.getElementById("url-input");
+    file_input.addEventListener("change", handleFile); 
+    function handleFile() {
+        let name = this.files[0].name;
+        // rudementary removal of file extension
+        name = name.replace(/\.[^/.]+$/, "");
+        id_input.value = name;
+        url_input.value = `https://leetcode.com/problems/${name}/`;
+        console.log(name);
+    }
+</script>
