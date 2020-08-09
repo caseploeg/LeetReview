@@ -12,17 +12,58 @@
     <p style="white-space: pre">{{line|string}}</p>
     {% endfor %}
   </div>
-  
+  <button id="submit" type="button">Submit</button> 
 </body>
 <script>
   const Sortable = window.Sortable;
-  
+ 
+  let correct = null;
+
   let el = document.getElementById('code');
   let sortable = Sortable.create(el);
-  function test(data) {
-    console.log('hello world!');
-    console.log(data); 
+
+  function check_answer(data) {
+    let url = "{{ request.path }}check";
+    let config = {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+    fetch(url, config)
+    .then(function(response) {
+        console.log(response);
+        return response.json();
+    })
+    .then(function(data) {
+        correct = data;
+        // indicate whether the current permutation is correct or not
+        // by updating background color on screen
+        //
+        // TODO: find a less visually obnoxious way to do this
+        if (correct === true) {
+            el.style.backgroundColor = 'green';
+        } else if (correct === false) {
+            el.style.backgroundColor = 'red';
+        }
+    });
   }
- 
-  test({{ lines|tojson }});
+
+  function get_answer() {
+      let code = document.getElementById('code');
+      lines = [];
+      for (let i = 0; i < code.children.length; i++) {
+          lines.push(code.children[i].textContent);
+      }
+      
+      return {
+          lines: lines,
+          id: {{id}},
+      };
+  }
+  let submit_button = document.getElementById("submit");
+  submit_button.onclick = function () {check_answer(get_answer());};
 </script>
