@@ -79,6 +79,7 @@ def practice_solution(id):
 def index():
     # currently the index template returns a random question for you to solve
     db = get_db()
+    # grabs all uploaded solutions, regardless of user
     solutions = db.execute(
         'SELECT s.id, lines, created, author_id, original_url'
         ' FROM solution s JOIN user u ON s.author_id = u.id'

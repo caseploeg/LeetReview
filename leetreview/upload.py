@@ -66,16 +66,17 @@ def upload_file():
                 except sqlite3.IntegrityError:
                     flash('id not unique')
                     return redirect(request.url)
-                return redirect(url_for('upload.uploaded_file', filename=filename))
+                return redirect(url_for('upload.solutions', filename=filename))
                 # return redirect(url_for('index'))
             else:
                 flash('Empty File')
     return render_template('upload/index.html')
 
 
-@bp.route('<path:filename>')
-def uploaded_file(filename):
+@bp.route('solutions/')
+def solutions():
     db = get_db()
+    # grabs all uploaded solutions, regardless of user
     solutions = db.execute(
         'SELECT s.id, lines, created, author_id, original_url'
         ' FROM solution s JOIN user u ON s.author_id = u.id'
