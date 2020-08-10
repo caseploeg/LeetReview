@@ -10,7 +10,8 @@
   <a href={{ url }}>{{ url }}</a>
   <div id="code">
     {% for line in lines %}
-    <p style="white-space: pre">{{line|string}}</p>
+    <div><code style="white-space: pre">{{line|string}}</code></div>
+    
     {% endfor %}
   </div>
   </div>
