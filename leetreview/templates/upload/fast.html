@@ -1,0 +1,11 @@
+<!doctype html>
+<title>Upload new File</title>
+<h1>Upload new File</h1>
+<form method=post enctype=multipart/form-data>
+  <input id="file-input" type=file name=file multiple>
+  <br>
+  <input type=submit value=Upload>
+</form>
+{% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+{% endfor %}
