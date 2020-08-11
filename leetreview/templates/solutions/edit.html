@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit "{{ s['id'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="body">Solution Code</label>
+    <textarea name="lines" id="lines">{{get_lines(request.form["lines"] or s["lines"])}}</textarea>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  
+{% endblock %}

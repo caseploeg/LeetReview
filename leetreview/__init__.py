@@ -45,7 +45,10 @@ def create_app(test_config=None):
     from . import practice
     app.register_blueprint(practice.bp)
 
-    app.add_url_rule('/', endpoint='upload.solutions')
+    from . import solutions
+    app.register_blueprint(solutions.bp)
+
+    app.add_url_rule('/', endpoint='solutions.index')
     
 
     return app

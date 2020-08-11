@@ -8,6 +8,7 @@ from flask import (
 
 from leetreview.auth import login_required
 from leetreview.db import get_db
+from leetreview.solutions import get_solution
 
 bp = Blueprint('practice', __name__, url_prefix='/practice')
 
@@ -31,12 +32,6 @@ def get_lines(solution):
     shuffled_lines = random.sample(saved_lines, k=len(saved_lines)) 
     return saved_lines, shuffled_lines
 
-"""
-@bp.route('/<id>/check', methods=['POST'])
-def check_answer_with_id(id):
-    current_app.logger.info("hi")
-    return redirect(url_for("practice.check_answer"))
-"""
 
 # accept the request to check answers from either the main practice page
 # or the one that specifies the problem id

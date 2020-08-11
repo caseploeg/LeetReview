@@ -9,12 +9,20 @@
 
 {% block content %}
   {% for s in solutions %}
-    <a href="{{ url_for('practice.practice_solution', id=s['id']) }}">
+    
       <article class="post">
-        <p>{{ s['id'] }}</p>
+        <header>
+          <div>
+            <a href="{{ url_for('practice.practice_solution', id=s['id']) }}"></a>
+              <p>{{ s['id'] }}</p>  
+            </a>
+          </div>
+          {% if g.user['id'] == s['author_id'] %}
+          <a class="action" href="{{ url_for('solutions.edit', id=s['id']) }}">Edit</a>
+        {% endif %}
+        </header>
       </article>
-    </a>
-
+      
     {% if not loop.last %}
       <hr>
     {% endif %}

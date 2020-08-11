@@ -83,7 +83,7 @@ def fast_upload():
         if not success:
             return redirect(request.url)
         else:
-            return redirect(url_for('upload.solutions'))
+            return redirect(url_for('solutions.index'))
     return render_template('upload/fast.html')
 
 
@@ -105,19 +105,5 @@ def upload_file():
         if not success:
             return redirect(request.url)
         else:
-            return redirect(url_for('upload.solutions'))
+            return redirect(url_for('solutions.index'))
     return render_template('upload/index.html')
-
-
-@bp.route('solutions/')
-def solutions():
-    db = get_db()
-    # grabs all uploaded solutions, regardless of user
-    solutions = db.execute(
-        'SELECT s.id, lines, created, author_id, original_url'
-        ' FROM solution s JOIN user u ON s.author_id = u.id'
-        ' ORDER BY created DESC'
-    ).fetchall()
-    current_app.logger.info(solutions)
-    return render_template('upload/solutions.html', solutions=solutions)
-    # return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
