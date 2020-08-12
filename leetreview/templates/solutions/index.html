@@ -19,6 +19,7 @@
           </div>
           {% if g.user['id'] == s['author_id'] %}
           <a class="action" href="{{ url_for('solutions.edit', id=s['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('solutions.merge', id=s['id']) }}">Merge</a>
         {% endif %}
         </header>
       </article>

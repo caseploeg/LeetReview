@@ -64,6 +64,22 @@ def edit(id):
     return render_template('solutions/edit.html', s=solution, get_lines=get_display_lines) 
 
 
-
+@bp.route('/<id>/merge', methods=('GET', 'POST'))
+def merge(id):
+    solution = get_solution(id)
+    if request.method == 'POST':
+        lines = request.get_json()
+        lines = json.dumps(lines)
+        db = get_db()
+        db.execute(
+            'UPDATE solution SET lines = ?'
+            ' WHERE id = ?',
+            (lines, id)
+        )
+        db.commit()
+        return redirect(url_for('solutions.index'))
+    else:
+        lines = json.loads(solution["lines"])
+        return render_template('solutions/merge.html', s=solution, lines=lines)
 
 

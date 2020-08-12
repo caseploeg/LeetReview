@@ -1,0 +1,126 @@
+
+<!doctype html>
+<body>
+  <div id="code">
+    <!-- <code style="white-space: pre;">
+        hi
+        this is
+        code
+    </code> -->
+    {% for line in lines %}
+    <div class="block">
+        <code style="white-space: pre">{{ line }}</code> <input type="checkbox">
+    </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" id="merge">Merge!</button>
+  <button type="button" id="un-merge">Un-Merge!</button>
+  <button type="button" id="submit">Submit Changes</button>
+</body>
+<script>
+
+    /*
+    Goes through the code blocks, and all sequences of continously checked off
+    checkboxes are merged into one big code block
+    */
+    function merge() {
+        code = document.getElementById('code');
+        for (let i = code.children.length - 2; i >= 0; i--) {
+            let block = code.children[i];
+            let prev_block = code.children[i+1];
+            let block_checked = block.querySelector('input').checked;
+            let prev_block_checked = prev_block.querySelector("input").checked;
+            if (block_checked && prev_block_checked) {
+                code_lines = prev_block.querySelectorAll("code");
+                code_lines.forEach(line => {
+                    let block_code = block.querySelector("code");
+                    block_code.innerText = block_code.innerText.concat("\n" + line.innerText);
+                });
+                code.removeChild(prev_block);
+            }
+        }   
+    }
+
+    /*
+    Goes through the code blocks, and any blocked that is checked off is
+    split into smaller blocks, where each smaller block represents a single
+    line of code. (default orientation of code lines)
+    */
+    function un_merge() {
+        code = document.getElementById('code');
+        for (let i = code.children.length - 1; i >= 0; i--) {
+            let block = code.children[i];
+            let block_checked = block.querySelector('input').checked;
+            if (block_checked) {
+                let block_code = block.querySelector("code");
+                code_lines = block_code.innerText.split('\n');
+                code_lines.forEach(line => {
+                    let new_block = document.createElement('div');
+                    new_block.classList.add('block');
+                    let e = document.createElement("code");
+                    let checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    e.style.whiteSpace = "pre";
+                    e.innerText = line;
+                    new_block.appendChild(e);
+                    new_block.appendChild(checkbox);
+                    code.insertBefore(new_block, block);
+                });
+                code.removeChild(block);
+            }
+        }
+    }
+
+    /*
+    Goes through all code blocks and generates an array of string
+    formatted blocks (grabs the text from the html elements)
+    */
+    function get_data() {
+        code = document.getElementById('code');
+        lines = [];
+        for (let i = 0; i < code.children.length; i++) {
+            let block = code.children[i];
+            str_line = "";
+            let code_lines = block.querySelectorAll("code");
+            code_lines.forEach(line => {
+                str_line = str_line.concat(line.innerText);
+            });
+            lines.push(str_line);
+        }
+        return lines;
+    }
+
+    /*
+    Submits a post request with the newly merged code blocks
+    to be saved to the server
+    */
+    function submit() {
+        let url = "{{ request.path }}";
+        let config = {
+            method: 'POST',
+            redirect: 'follow',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(get_data())
+        };
+        fetch(url, config)
+        .then(function(response) {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        });
+    }
+
+    let merge_button = document.getElementById('merge');
+    merge_button.onclick = merge;
+
+    let un_merge_button = document.getElementById('un-merge');
+    un_merge_button.onclick = un_merge;
+
+    let submit_button = document.getElementById('submit');
+    submit_button.onclick = submit;
+</script>
