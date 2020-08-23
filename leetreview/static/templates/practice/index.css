@@ -1,0 +1,14 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 500px 500px;
+}
+
+.code {
+    display: block;
+    white-space: pre-line;
+}
+
+
+#code .code {
+    white-space: pre;
+}

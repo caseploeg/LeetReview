@@ -5,15 +5,28 @@
 </head>
 <title>Practice - LeetReview</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='templates/practice/index.css') }}">
 <body>
   <h1>Practice</h1>
   <a href={{ url }}>{{ url }}</a>
-  <div id="code">
-    {% for line in lines %}
-    <div><code style="white-space: pre">{{line|string}}</code></div>
+  
+
+  <div class="wrapper">
+    <div id="bank">
+      {% for line in lines %}
+        <code class="code">{{line|string}}</code>
+      {% endfor %}
+    </div>
     
-    {% endfor %}
+    <div id="code">
+      
+    </div>
   </div>
+
+
+
+
+
   </div>
       <button id="submit" type="button">Submit</button> 
       <p id="result"></p>
@@ -24,8 +37,15 @@
  
   let correct = null;
 
-  let el = document.getElementById('code');
-  let sortable = Sortable.create(el);
+  let code = document.getElementById('code');
+  let code_sortable = Sortable.create(code, {
+    group: 'lines',
+  });
+
+  let bank = document.getElementById('bank');
+  let bank_sortable = Sortable.create(bank, {
+    group: 'lines',
+  });
 
   function check_answer(data) {
     let url = "{{ request.path }}check";
