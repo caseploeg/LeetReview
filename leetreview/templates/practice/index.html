@@ -14,7 +14,7 @@
   <div class="wrapper">
     <div id="bank">
       {% for line in lines %}
-        <code class="code">{{line|string}}</code>
+        <code style="white-space: pre" class="code">{{line}}</code>
       {% endfor %}
     </div>
     
@@ -78,7 +78,7 @@
   }
 
   function get_answer() {
-      let code = document.getElementById('code');
+      let code = document.getElementById('bank');
       lines = [];
       for (let i = 0; i < code.children.length; i++) {
           lines.push(code.children[i].textContent);
